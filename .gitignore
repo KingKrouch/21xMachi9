@@ -1,0 +1,42 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Project Specific Ignores
+Intermediate/
+*.asi
+.vs/
+Binaries/Win64/plugins/21xMachi9_Debug_Win64.pdb
+Binaries/Win64/plugins/21xMachi9_Debug_Win64.ilk
+Binaries/Win64/plugins/Updater_Debug_Win64.pdb
+Binaries/Win64/plugins/Updater_Debug_Win64.ilk
+Binaries/Win64/plugins/Updater.pdb

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="34">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>57</ID>
+      <Description>"t.MaxFPS (Change to 9999 to uncap)"</Description>
+      <LastState Value="200" RealAddress="144B113A338"/>
+      <VariableType>Float</VariableType>
+      <Address>"DXM-Win64-Shipping.exe"+045C1298</Address>
+      <Offsets>
+        <Offset>0</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>55</ID>
+      <Description>"FOV (Change to "0.0116563337" for 21:9, "0.008726646" for 16:9)"</Description>
+      <LastState Value="0.008726646192" RealAddress="7FF67EE06DA0"/>
+      <VariableType>Float</VariableType>
+      <Address>"DXM-Win64-Shipping.exe"+2CF6DA0</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>50</ID>
+      <Description>"Pillarboxes (33 83 4C 01 for 21:9, 33 83 4C 02 for 16:9, 33 83 4C 00 to disable)"</Description>
+      <LastState Value="33 83 4C 02" RealAddress="7FF67DF49420"/>
+      <ShowAsHex>1</ShowAsHex>
+      <VariableType>Array of byte</VariableType>
+      <ByteLength>4</ByteLength>
+      <Address>"DXM-Win64-Shipping.exe"+1E39420</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>15</ID>
+      <Description>"ResX"</Description>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>58</ID>
+          <Description>"Horizontal Resolution"</Description>
+          <LastState Value="2560" RealAddress="7FF6802A95B0"/>
+          <VariableType>4 Bytes</VariableType>
+          <Address>"DXM-Win64-Shipping.exe"+41995B0</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>18</ID>
+      <Description>"ResY"</Description>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>59</ID>
+          <Description>"Vertical Resolution"</Description>
+          <LastState Value="1080" RealAddress="7FF6802A95B4"/>
+          <VariableType>4 Bytes</VariableType>
+          <Address>"DXM-Win64-Shipping.exe"+41995B4</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>

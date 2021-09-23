@@ -1,0 +1,27 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+configuration: Release
+before_build:
+- cmd: git submodule -q update --init --recursive
+build:
+  project: 21xMachi9.sln
+  verbosity: minimal
+before_package:
+- ps: "$releases = \"https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases\"\n$name = \"Ultimate-ASI-Loader_x64.zip\"\n    \n$latestRelease = Invoke-WebRequest $releases/latest -Headers @{\"Accept\"=\"application/json\"}\n$json = $latestRelease.Content | ConvertFrom-Json\n$latestVersion = $json.tag_name\n$url = \"$releases/download/$latestVersion/$name\"\nStart-FileDownload $url -FileName 'C:\\Ultimate-ASI-Loader_x64.zip'\n7z e c:\\Ultimate-ASI-Loader_x64.zip -oc:\\projects\\21xMachi9\\Binaries\\Win64\ncd \"Binaries\\Win64\"\nRename-Item -Path \"dinput8.dll\" -NewName \"dsound.dll\""
+after_build:
+- cmd: >-
+    cd c:\projects\21xMachi9\Binaries\Win64\plugins
+
+    del *.bat
+    
+    del *.metagen
+    
+    del *.pdb
+    
+    cd c:\projects\21xMachi9
+    
+    cd c:\projects\21xMachi9\Binaries
+    
+artifacts:
+- path: Binaries\Win64
+  name: 21xMachi9_Win64_Build-$(configuration)-v$(appveyor_build_version)
