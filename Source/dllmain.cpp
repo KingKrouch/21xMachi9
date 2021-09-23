@@ -70,8 +70,6 @@ void readConfig()
     // Framerate/VSync Config Values
     useCustomFPSCap = config.ReadBoolean("Framerate", "useCustomFPSCap", false);
     tMaxFPS = config.ReadInteger("Framerate", "t.MaxFPS", 200);
-    // Launcher Config Values
-    ignoreUpdates = config.ReadBoolean("Launcher", "ignoreUpdates", false);
 }
 
 void fovCalc()
