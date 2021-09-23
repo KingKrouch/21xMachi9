@@ -37,7 +37,7 @@ using namespace std;
 // Config.ini variables
 bool useCustomFPSCap;
 bool useCustomFOV;
-int tMaxFPS;
+int maxFPS;
 bool ignoreUpdates;
 int customFOV;
 
@@ -46,10 +46,11 @@ int hRes;
 int vRes;
 float originalAspectRatio = 1.777777777777778;
 float aspectRatio;
+bool preserveYAxis;
 
 // FOV variables
 float originalFOV = 0.008726646192; // Declares the original 16:9 vertical FOV.
-float FOV;
+float FOVOffset;
 
 // Misc variables
 bool check = true; // do not change to false or else resolution checks won't run.
@@ -69,33 +70,43 @@ void readConfig()
     customFOV = config.ReadInteger("FieldOfView", "FOV", 90);
     // Framerate/VSync Config Values
     useCustomFPSCap = config.ReadBoolean("Framerate", "useCustomFPSCap", false);
-    tMaxFPS = config.ReadInteger("Framerate", "t.MaxFPS", 200);
+    maxFPS = config.ReadInteger("Framerate", "maxFPS", 200);
+    // Launcher Config Values
+    ignoreUpdates = config.ReadBoolean("Launcher", "ignoreUpdates", false);
+    // Aspect Ratio Values
+    preserveYAxis = config.ReadBoolean("AspectRatio", "PreserveYAxis", false);
 }
 
-void fovCalc()
+void fovOffsetCalc()
 {
     // Declare the vertical and horizontal resolution variables.
     int hRes = *(int*)((intptr_t)baseModule + 0x41995B0); // Grabs Horizontal Resolution integer.
     int vRes = *(int*)((intptr_t)baseModule + 0x41995B4); // Grabs Vertical Resolution integer.
 
     // Convert the int values to floats, so then we can determine the aspect ratio.
-    float aspectRatio = (float)hRes / (float)vRes;
+    aspectRatio = (float)hRes / (float)vRes;
 
-    if (useCustomFOV)
+    if (!preserveYAxis)
     {
-		// Subtracts the custom FOV by the default FOV to get the difference
-		float FOVDifference = (float)customFOV - 90.0f;
-        // If useCustomFOV is set to "1", then calculate the vertical FOV using the new aspect ratio, the old aspect ratio, and the desired custom FOV (based on the FOVDifference to offset any oddities).
-        FOV = round((2.0f * atan(((aspectRatio) / (16.0f / 9.0f)) * tan(((originalFOV * 10000.0f) + FOVDifference) / 2.0f * ((float)M_PI / 180.0f)))) * (180.0f / (float)M_PI) * 100.0f) / 100.0f / 10000.0f;
+        // If the aspect ratio is less than or equal to 16:9, use the standard Vert- offset, so 16:10 and 4:3 resolutions will look okay.
+        if (aspectRatio <= (16.0f / 9.0f))
+        {
+            FOVOffset = originalFOV;
+        }
+        // If the aspect ratio is greater than 16:9, then adjust the FOV offset based on the current screen resolution, as you don't want Vert- behavior in 21:9/32:9/48:9/etc.
+        else if (aspectRatio > (16.0f / 9.0f))
+        {
+            // If useCustomFOV is set to "0", then calculate the vertical FOV using the new aspect ratio, the old aspect ratio, and the original FOV.
+            FOVOffset = std::round((2.0f * atan(((aspectRatio) / (16.0f / 9.0f)) * tan((originalFOV * 10000.0f) / 2.0f * ((float)M_PI / 180.0f)))) * (180.0f / (float)M_PI) * 100.0f) / 100.0f / 10000.0f;
+        }
     }
     else
     {
-        // If useCustomFOV is set to "0", then calculate the vertical FOV using the new aspect ratio, the old aspect ratio, and the original FOV.
-        FOV = round((2.0f * atan(((aspectRatio) / (16.0f / 9.0f)) * tan((originalFOV * 10000.0f) / 2.0f * ((float)M_PI / 180.0f)))) * (180.0f / (float)M_PI) * 100.0f) / 100.0f / 10000.0f;
+        FOVOffset = std::round((2.0f * atan(((aspectRatio) / (16.0f / 9.0f)) * tan((originalFOV * 10000.0f) / 2.0f * ((float)M_PI / 180.0f)))) * (180.0f / (float)M_PI) * 100.0f) / 100.0f / 10000.0f;
     }
 
     // Writes FOV to Memory.
-    *(float*)((intptr_t)baseModule + 0x2CF6DA0) = FOV;
+    *(float*)((intptr_t)baseModule + 0x2CF6DA0) = FOVOffset;
 }
 
 void pillarboxRemoval()
@@ -107,20 +118,20 @@ void pillarboxRemoval()
 void uncapFPS() //Uncaps the framerate.
 {
 	//Writes the new t.MaxFPS cap to memory, alongside pointer.
-	*(float*)(*((intptr_t*)((intptr_t)baseModule + 0x045C1298)) + 0x0) = (float)tMaxFPS;
+	*(float*)(*((intptr_t*)((intptr_t)baseModule + 0x045C1298)) + 0x0) = (float)maxFPS;
 }
 
 void resolutionCheck()
 {
     if (aspectRatio != (*(int*)((intptr_t)baseModule + 0x41995B0) / *(int*)((intptr_t)baseModule + 0x41995B4)))
     {
-        fovCalc();
+        fovOffsetCalc();
     }
 }
 
 void framerateCheck()
 {
-	if (tMaxFPS != *(float*)(*((intptr_t*)((intptr_t)baseModule + 0x045C1298)) + 0x0))
+	if (maxFPS != *(float*)(*((intptr_t*)((intptr_t)baseModule + 0x045C1298)) + 0x0))
 	{
 		uncapFPS();
 	}
@@ -133,7 +144,7 @@ void StartPatch()
 
     Sleep(5000); // Sleeps the thread for five seconds before applying the memory values.
 
-	fovCalc(); // Calculates the new vertical FOV.
+    fovOffsetCalc(); // Calculates the new vertical FOV.
 
 	pillarboxRemoval(); // Removes the in-game pillarboxing.
 
